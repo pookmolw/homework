@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block base%}
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">接口测试平台</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+        
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li>
+              <a href="/project/">
+                <i class="glyphicon glyphicon-th"> 项目管理</i>
+              </a>
+            </li>
+            <li class="active">
+              <a href="/module/">
+                <i class="glyphicon glyphicon-th-list"> 模块管理</i>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="/testcase/">用例管理</a></li>
+            <li><a href="">任务管理</a></li>
+ 
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">mock Server</a></li>
+            <li><a href="">测试工具</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          
+          {% if type == "list" %}
+          <h4 class="sub-header">模块列表<button type="button" class="btn btn-sm btn-primary" style="float: right;" onclick="location.href='/module/add_module/'">创建模块</button></h4>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>名称</th>
+                  <th>项目</th>
+                  <th>描述</th>
+                  <th>创建时间</th>
+                  <th>更新时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for m in modules %}
+                <tr>
+                  <td>{{ m.id }}</td>
+                  <td>{{ m.name }}</td>
+                  <td>{{ m.project }}</td>
+                  <td>{{ m.describe }}</td>
+                  <td>{{ m.create_time | date:"Y-m-d H:i:s" }}</td>
+                  <td>{{ m.update_time | date:"Y-m-d H:i:s" }}</td>
+                  <td>
+                    <a href="/module/edit_module/{{m.id}}/"><i class="glyphicon glyphicon-pencil"></i></a>
+                    <a href="/module/delete_module/{{m.id}}/" style="margin-left: 10px;"><i class="glyphicon glyphicon-trash"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+
+          {% if type == "add" %}
+          <fieldset>
+          <h4 class="sub-header">添加模块</h4>
+          <form id="target" class="form-horizontal" method="post" action="/module/add_module/">
+          {{form.as_p}}
+            
+            <!-- Button -->
+            <div class="control-group">
+              <div class="controls">
+              <button class="btn btn-success">保存</button>
+              </div>
+            </div>
+
+
+          </form>
+          </fieldset>
+          {% endif %}
+
+
+          {% if type == "edit" %}
+          <h4 class="sub-header">编辑模块</h4>
+          <form id="target" class="form-horizontal" method="post" action="/module/edit_module/{{mid}}/">
+          {{form.as_p}}
+          <button type="submit">提交</button>
+          {% endif %}
+         
+        </div>
+
+      </div>
+    </div>
+</body>
+{% endblock %}
+
+

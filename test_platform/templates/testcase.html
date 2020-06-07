@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block base%}
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">接口测试平台</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+        
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li><a href="/project/"><i class="glyphicon glyphicon-th"> 项目管理</i><span class="sr-only">(current)</span></a></li>
+            <li><a href="/module/"><i class="glyphicon glyphicon-th-list"> 模块管理</i></a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="/testcase/">用例管理</a></li>
+            <li><a href="">任务管理</a></li>
+ 
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">mock Server</a></li>
+            <li><a href="">测试工具</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          
+          {% if type == "list" %}
+          <h4 class="sub-header">Postman</h4>
+          {% endif %}
+
+          {% if type == "add" %}
+          <!-- <fieldset> -->
+          <h4 class="sub-header">Postman</h4>
+          
+          <div class="input-group">
+            <span class="input-group-addon">* URL</span>
+            <input id="req_url" type="text" class="form-control" name="">
+          </div>
+          
+          <div style="margin-top: 10px">
+            <label>* 请求方法:</label>
+            <label class="radio-inline">
+              <input type="radio" name="req_method" id="get" value="get">GET
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="req_method" id="post" value="post" >POST
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="req_method" id="put" value="put">PUT
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="req_method" id="delete" value="delete">DELETE
+            </label>
+          </div>
+
+          <div class="input-group" style="margin-top: 10px">
+            <span class="input-group-addon">* header</span>
+            <input id="header" type="text" class="form-control" name="">
+          </div>
+          
+          <div  style="margin-top: 10px">
+           <label>* 参数类型:</label>
+            <label class="radio-inline">
+              <input type="radio" name="req_type" id="form_data" value="form">form-data
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="req_type" id="json" value="json">JSON
+            </label>
+          </div>
+
+          <div class="input-group" style="margin-top: 10px">
+            <span class="input-group-addon">参数</span>
+            <input value="{}" id="req_parameter" type="text" class="form-control" name="">
+          </div>
+          <p style="color: #8B8989">说明:以字典的方式设置参数</p>
+
+          <div style="float: right;margin-right: 10px">
+            <button type="button" class="btn btn-primary" id="send">发送</button>
+          </div>
+
+          <div  style="margin-top: 30px">
+            <p>返回结果:</p>
+            <textarea id="req_result" class="form-control" rows="10"></textarea>
+          </div>
+
+          <div style="float: right;margin-right: 10px;margin-top: 10px">
+            <button type="button" class="btn btn-primary" id="assert" onclick="assertFun()">断言</button>
+          </div>
+
+          <div  style="margin-top: 10px">
+           <label>* 断言类型:</label>
+            <label class="radio-inline">
+              <input type="radio" name="assert_type" id="contains" value="contains" checked>包含
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="assert_type" id="all" value="all">全部
+            </label>
+          </div>
+
+          <div  style="margin-top: 10px">
+            <p>输入断言:</p>
+            <textarea id="input_assert" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div style="margin-top: 20px">
+            <p>断言结果:</p>
+            <textarea id="assert_result" class="form-control" rows="10"></textarea>
+          </div>
+
+          <div style="margin-top: 20px">
+            <label>项目</label>
+            <select id="project_arr">
+            </select>
+
+            <label>模块</label>
+            <select id="module_arr">
+            </select>
+          </div>
+
+          <div style="margin-top: 5px" class="input-group">
+            <span class="input-group-addon">用例名称</span>
+            <input id="case_name" type="text" class="form-control" name="">
+          </div>
+
+          <div style="float: right;margin-right: 10px;margin-top: 10px">
+            <button type="button" class="btn btn-primary" id="save" onclick="saveFun()">保存用例</button>
+          </div>
+
+          {% endif %}
+
+          {% if type == "edit" %}
+          <h4 class="sub-header">编辑项目</h4>
+          <form id="target" class="form-horizontal" method="post" action="/project/edit_project/{{pid}}/">
+          {{form.as_p}}
+          <button type="submit">提交</button>
+          {% endif %}
+         
+        </div>
+
+      </div>
+    </div>
+
+
+</body>
+<!-- <script src=""></script> -->
+<script type="text/javascript">
+
+  ProjectInit("project_arr")//项目初始化
+
+  $("#project_arr").change(function(){
+    var select_obj = document.getElementById("module_arr");
+
+    window.alert("项目变化了")
+    // pid = $("#project_arr").val();
+    let pid = $(this).children('option:selected').val();
+    console.log(pid);
+    $.post("/module/get_module_list/",
+      {
+        "pid":pid,
+      },
+      function(resp){
+        if (resp.success == true && resp.status == 10200) {
+          let mod_arr = resp.data
+          for (let i = 0; i < mod_arr.length; i++) {
+            selectAddOption(select_obj,mod_arr[i])
+          }//for
+          console.log(select_obj)
+        }//if
+      });//post
+  })//change
+
+    // function jsFun(){
+  //   console.log("this is jsFun");
+  //   window.alert("jsFun!");
+  //   var url = document.querySelector("#req_url").value;
+  //   var method = $('input[name="req_method"]:checked').value ;
+  //   var header = document.querySelector("#header").value;
+  //   var type = $('input[name="req_type"]:checked').value ;
+  //   var parameter = document.querySelector("#req_parameter").value;
+  //   console.log(url);
+  //   console.log(method);
+  //   console.log(header);
+  //   console.log(type);
+  //   console.log(parameter);
+
+  $("#send").click(function(){
+    var url = $("#req_url").val();
+    var method = $('input[name="req_method"]:checked').val();
+    var header = $("#header").val();
+    var type = $('input[name="req_type"]:checked').val();
+    var parameter = $("#req_parameter").val();
+    window.alert("jsFun!");
+
+    if(url === ""){
+      window.alert("url不能为空");
+      return;
+    };
+
+    $.post("/testcase/debug/",
+     {
+       "url":url,
+       "method":method,
+       "header":header,
+       "type":type,
+       "parameter":parameter
+     },
+     function(data,status){
+       alert(data.result);
+       console.log(data.result);
+       document.querySelector("#req_result").value = data.result;
+     }//functon
+   );//post
+
+  });//click send
+
+  function assertFun(){
+    window.alert("assertFun!");
+    var req_result = document.querySelector("#req_result").value;
+    var assert_type = $('input[name="assert_type"]:checked').val();
+    var input_assert = document.querySelector("#input_assert").value;
+    console.log("返回结果:",req_result);
+    console.log("断言类型:",assert_type);
+    console.log("输入断言:",input_assert);
+
+    if(req_result === "" || input_assert === ""){
+      window.alert("断言不能为空");
+      return;
+    };
+
+     $.post("/testcase/assert/",
+     {
+       "req_result":req_result,
+       "assert_type":assert_type,
+       "input_assert":input_assert
+     },
+     function(data,status){
+       alert(data.result);
+       console.log(data.result);
+       document.querySelector("#assert_result").value = data.result;
+     }//functon
+   );//post
+
+  }//assertfunc
+
+</script>
+
+{% endblock %}
+
+
