@@ -65,9 +65,7 @@ def get_project_list(request):
 		projects = Project.objects.all()
 		project_list = []
 		for p in projects:
-			pid = p.id
-			name = p.name
-			d = {"pid":pid,"name":name}
+			d = {"id":p.id,"name":p.name}
 			project_list.append(d)
 		return JsonResponse({"success":True,"status":10200,"data":project_list})
 	else:

@@ -10,4 +10,6 @@ urlpatterns = [
     path('add_testcase/',views.add_testcase),
     path('edit_testcase/<int:tid>/',views.edit_testcase),
     path('delete_testcase/<int:tid>/',views.delete_testcase),
+    path('save_case/',views.save_case),
+    
 ]

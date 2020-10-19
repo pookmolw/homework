@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from testcase_app.models import Testcase
 import requests
 import json
 
@@ -128,3 +129,66 @@ def delete_testcase(request,tid):
 		return HttpResponseRedirect("/project/")
 	else:
 		return HttpResponseRedirect("/project/")
+
+# 保存用例
+@login_required
+def save_case(request):
+	if request.method == "POST":
+
+		url = request.POST.get("url","")
+		req_method = request.POST.get("method","")
+		header = request.POST.get("header","")
+		parameter_type = request.POST.get("type","")
+		parameter = request.POST.get("parameter","")
+		mid = request.POST.get("mid","")
+		assert_type = request.POST.get("assert_type","")
+		assert_text = request.POST.get("assert","")
+		case_name = request.POST.get("case_name","")
+
+		if case_name == "":
+			return JsonResponse({"data":"用例名称不能为空","status":10101})
+		
+		if url == "":
+			return JsonResponse({"data":"请求地址不能为空","status":10102})
+		
+		if req_method == "get":
+			req_method = 1
+		elif req_method == "post":
+			req_method = 2
+		elif req_method == "put":
+			req_method = 3
+		elif req_method == "delete":
+			req_method = 4
+		else:
+			return JsonResponse({"data":"请求方式错误","status":10103})
+
+		if parameter_type == "form":
+			parameter_type = 1
+		elif parameter_type == "json":
+			parameter_type = 2
+		else:
+			return JsonResponse({"data":"参数类型错误","status":10103})
+		
+		if mid == "":
+			return JsonResponse({"data":"所属模块不能为空","status":10104})
+
+		if case_name == "":
+			return JsonResponse({"data":"用例名称不能为空","status":10101})
+
+		if assert_type == "contains":
+			assert_type = 1
+		elif assert_type == "match":
+			assert_type = 2
+		else:
+			return JsonResponse({"data":"断言类型错误","status":10105})
+		
+		if assert_text == "":
+			return JsonResponse({"data":"断言内容不能为空","status":10106})
+
+		Testcase.objects.create(name=case_name,url=url,method=req_method,header=header,
+			parameter_type=parameter_type,parameter_body=parameter,assert_result=result,
+			assert_type=assert_type,assert_text=assert_text)
+		
+		return JsonResponse({"data":"创建成功","status":10200})
+	else:
+		return JsonResponse({"data":"请求方式错误","status":10400})

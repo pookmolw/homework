@@ -67,15 +67,13 @@ def get_module_list(request):
 		pid = request.POST.get("pid","")
 		if pid == "":
 			return JsonResponse({"data":"项目id为空","status":10401,"success":False})
-		
+		# 查询多个结果时需要用filter
 		modules = Module.objects.filter(project=pid)
 		module_list = []
 		for m in modules:
-			d = {"name":m.name,"mid":m.id}
+			d = {"name":m.name,"id":m.id}
 			module_list.append(d)
 		# print(module_list)
 		return JsonResponse({"data":module_list,"status":10200,"success":True})
 	else:
 		return JsonResponse({"data":"请求方式错误","status":10400,"success":False})
-
-	

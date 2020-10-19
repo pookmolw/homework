@@ -112,7 +112,7 @@
               <input type="radio" name="assert_type" id="contains" value="contains" checked>包含
             </label>
             <label class="radio-inline">
-              <input type="radio" name="assert_type" id="all" value="all">全部
+              <input type="radio" name="assert_type" id="match" value="match">全部
             </label>
           </div>
 
@@ -128,11 +128,11 @@
 
           <div style="margin-top: 20px">
             <label>项目</label>
-            <select id="project_arr">
+            <select id="project_arr" class="select_picker">
             </select>
 
             <label>模块</label>
-            <select id="module_arr">
+            <select id="module_arr" class="select_picker">
             </select>
           </div>
 
@@ -161,32 +161,90 @@
 
 
 </body>
-<!-- <script src=""></script> -->
+
 <script type="text/javascript">
 
-  ProjectInit("project_arr")//项目初始化
+  //项目选择框内容初始化
+  ProjectInit("project_arr");
 
+  //选择项目
   $("#project_arr").change(function(){
+    // 获得模块选择框对象
     var select_obj = document.getElementById("module_arr");
 
     window.alert("项目变化了")
     // pid = $("#project_arr").val();
+    // var options=$("#test option:selected");  //获取选中的项
     let pid = $(this).children('option:selected').val();
-    console.log(pid);
-    $.post("/module/get_module_list/",
-      {
-        "pid":pid,
-      },
-      function(resp){
-        if (resp.success == true && resp.status == 10200) {
-          let mod_arr = resp.data
-          for (let i = 0; i < mod_arr.length; i++) {
-            selectAddOption(select_obj,mod_arr[i])
-          }//for
-          console.log(select_obj)
-        }//if
-      });//post
-  })//change
+    console.log("选择项目id:",pid);
+    ModuleInit("module_arr",pid);
+  });//change
+
+  
+  function saveFun(){
+    window.alert("saveFun!");
+    var module_id = $("#module_arr option:selected").val();　 //获取的是value而不是innerHTML
+    var url = $("#req_url").val();
+    var method = $('input[name="req_method"]:checked').val();
+    var header = $("#header").val();
+    var type = $('input[name="req_type"]:checked').val();
+    var parameter = $("#req_parameter").val();
+    var assert_type = $('input[name="assert_type"]:checked').val();
+    var assert_text = $("#input_assert").val();
+    var case_name = $("#case_name").val(); 
+    
+    console.log("module_id:",module_id);
+    console.log("url:",url);
+    console.log("method:",method);
+    console.log("header:",header);
+    console.log("type:",type);
+    console.log("parameter:",parameter);
+    console.log("assert_type:",assert_type);
+    console.log("assert_text:",assert_text);
+    console.log("case_name:",case_name);
+
+
+
+
+    if(url === ""){
+      window.alert("url不能为空");
+      return;
+    };
+    if(case_name === ""){
+      window.alert("用例名称不能为空");
+      return;
+    };
+    if(assert_type === "" || assert_text === ""){
+      window.alert("断言类型或参数不能为空");
+      return;
+    };
+    if(module_id === ""){
+      window.alert("所属模块不能为空");
+      return;
+    };
+
+
+     $.post("/testcase/save_case/",
+     {
+       "url":url,
+       "method":method,
+       "header":header,
+       "type":type,
+       "parameter":parameter,
+       "mid":module_id,
+       "assert_type":assert_type,
+       "assert":assert_text,
+       "case_name":case_name
+     },
+     function(resp,status){
+       window.alert(resp.data);
+       console.log(resp.data);
+       // document.querySelector("#assert_result").value = data.result;
+     }//functon
+   );//post
+
+  }//savefunc
+
 
     // function jsFun(){
   //   console.log("this is jsFun");
@@ -208,7 +266,7 @@
     var header = $("#header").val();
     var type = $('input[name="req_type"]:checked').val();
     var parameter = $("#req_parameter").val();
-    window.alert("jsFun!");
+    window.alert("sendFun!");
 
     if(url === ""){
       window.alert("url不能为空");
